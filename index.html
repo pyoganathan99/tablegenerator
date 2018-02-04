@@ -1,0 +1,185 @@
+<html>
+    <head>
+        <title>Table Generator</title>
+    </head>
+    <style>
+        body{
+            font-family: monospace;
+        }
+    </style>
+    <body>
+
+        <h3>HTML Table Generator</h3><br>
+
+        <b>Row Opening Tag:</b><br><br>
+        <textarea id="row-opening-tag">&lt;tr&gt;</textarea><br><br><br>
+
+        <b>Row Closing Tag:</b><br><br>
+        <textarea id="row-closing-tag">&lt;/tr&gt;</textarea><br><br><br>
+
+        <b>Data Tags:</b><br><br>
+        <div id="holder">
+            <div id="column1">
+                Column 1: (Opening)<br>
+                <textarea id="data-tag-open-1">&lt;td&gt;</textarea><br><br>
+                Column 1: (Closing)<br>
+                <textarea id="data-tag-close-1">&lt;td&gt;</textarea><br><br>
+            </div>
+        </div>
+        <button onclick="addColumn();">Add Column</button>        
+        <button id="remove-button" onclick="removeColumn();" disabled>Remove Column</button><br><br><br>
+
+        <b>Data:</b><br><br>
+        <div id="holder1">
+            <div id="data1">
+                Data for column 1:<br>
+                <textarea id="data-1" rows="10"></textarea><br><br>
+            </div>
+        </div><br>
+
+        <b>Table Body Content:</b><br><br>
+        <button onclick="generate()">Generate</button><br><br>
+        <textarea id="output" rows="20" cols="50" readonly></textarea><br><br><br>
+    </body>
+    <script>
+        var size=1;        
+
+        function addColumn(){
+            
+            var content = document.createElement('div');
+            content.id = 'column' + ++size;
+
+            content.appendChild(
+                document.createTextNode('Column ' + size + ': (Opening)')
+            );
+
+            content.appendChild( document.createElement('br') );
+
+            var textarea = document.createElement('textarea');
+            textarea.id = 'data-tag-open' + size;
+            textarea.innerHTML = '&lt;td&gt;'
+
+            content.appendChild( textarea );
+
+            content.appendChild( document.createElement('br') );
+            content.appendChild( document.createElement('br') );
+
+
+            content.appendChild(
+                document.createTextNode('Column ' + size + ': (Closing)')
+            );
+
+            content.appendChild( document.createElement('br') );
+
+            var textarea = document.createElement('textarea');
+            textarea.id = 'data-tag-close' + size;
+            textarea.innerHTML = '&lt;/td&gt;'
+
+            content.appendChild( textarea );
+
+            content.appendChild( document.createElement('br') );
+            content.appendChild( document.createElement('br') );
+
+            document.getElementById('holder').appendChild(content);
+
+
+            content = document.createElement('div');
+            content.id = 'data' + size;
+
+            content.appendChild(
+                document.createTextNode('Data for column ' + size + ':')
+            );
+
+            content.appendChild( document.createElement('br') );
+
+            var textarea = document.createElement('textarea');
+            textarea.id = 'data-' + size;
+            textarea.rows = 10;
+
+            content.appendChild( textarea );
+
+            content.appendChild( document.createElement('br') );
+            content.appendChild( document.createElement('br') );
+
+            document.getElementById('holder1').appendChild(content);
+
+            if(size >= 2)
+                document.getElementById('remove-button')
+                    .removeAttribute('disabled');
+
+        }
+
+        function removeColumn(){
+
+            if(size == 2)
+                document.getElementById('remove-button')
+                    .setAttribute('disabled','disabled');
+
+            document.getElementById('column' + size).remove();
+            document.getElementById('data' + size--).remove();
+
+        }
+
+        function convertToPlain(symbolText){
+            return symbolText.replace('&lt;','<').replace('&gt;','>');
+        }
+
+        function generate(){
+
+            var TR=document.getElementById('row-opening-tag').value;
+            var cTR=document.getElementById('row-closing-tag').value;
+
+            var TDs=[];
+            var cTDs=[];
+            var columns=[];
+            var prevColumnRows=0;
+
+            for(i=0;i<size;i++){
+
+                TDs.push(
+                    convertToPlain(
+                        document.getElementById('data-tag-open-' + (i+1)).value
+                    )
+                );
+
+                cTDs.push(
+                    convertToPlain(
+                        document.getElementById('data-tag-close-' + (i+1)).value
+                    )
+                );
+               
+                data = document.getElementById('data-' + (i+1)).value.split('\n');
+
+                if((i!=0)&&(prevColumnRows!=data.length)){
+                    document.getElementById('output').value=
+                        "Number of rows inconsistent";
+                    return;
+                }
+
+                prevColumnRows=data.length;
+
+                columns.push(data);
+            }
+
+            var output="";
+
+            for(i=0;i<prevColumnRows;i++){
+
+                output+=TR + "\n   ";
+
+                for(j=0;j<size;j++){
+
+                    output+=TDs[j] + "\n      " + columns[j][i] +
+                        "\n   " + cTDs[j] + "\n";
+
+                }
+
+                output+=cTR + "\n";
+
+            }
+
+            document.getElementById('output').value=output;
+
+        }
+    </script>
+</html>
