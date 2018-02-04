@@ -56,7 +56,7 @@
             content.appendChild( document.createElement('br') );
 
             var textarea = document.createElement('textarea');
-            textarea.id = 'data-tag-open' + size;
+            textarea.id = 'data-tag-open-' + size;
             textarea.innerHTML = '&lt;td&gt;'
 
             content.appendChild( textarea );
@@ -72,7 +72,7 @@
             content.appendChild( document.createElement('br') );
 
             var textarea = document.createElement('textarea');
-            textarea.id = 'data-tag-close' + size;
+            textarea.id = 'data-tag-close-' + size;
             textarea.innerHTML = '&lt;/td&gt;'
 
             content.appendChild( textarea );
@@ -165,11 +165,11 @@
 
             for(i=0;i<prevColumnRows;i++){
 
-                output+=TR + "\n   ";
+                output+=TR + "\n";
 
                 for(j=0;j<size;j++){
 
-                    output+=TDs[j] + "\n      " + columns[j][i] +
+                    output+="   " + TDs[j] + "\n      " + columns[j][i] +
                         "\n   " + cTDs[j] + "\n";
 
                 }
